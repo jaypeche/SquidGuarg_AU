@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#######################################################
-#  SquidGuard Update Script by jay@proxy.arg.org      #
-#######################################################
+##############################
+#  SquidGuard Update Script  #
+##############################
 
 # Variables :
 URL="ftp://ftp.univ-tlse1.fr/blacklist"
