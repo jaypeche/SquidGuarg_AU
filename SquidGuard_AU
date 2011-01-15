@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#######################################################
+#  SquidGuard Update Script by jay@proxy.arg.org      #
+#######################################################
+
+# Variables :
+URL="ftp://ftp.univ-tlse1.fr/blacklist"
+BASES=(adult publicite malware phishing warez)
+DATABASE="/etc/squidGuard/db/blacklists"
+
+
+for base in "${BASES[@]}"
+do
+   echo "Récupération de la base ${base}..."
+   # Récupération de l'archive :
+   cd /tmp
+   wget --continue --quiet --timeout=30 ${URL}/${base}.tar.gz
+
+   # Décompression de l'archive :
+   tar -xvzf ${base}.tar.gz -C ${DATABASE}
+
+   # Suppression de l'archive temporaire :
+   rm /tmp/${base}.tar.gz
+
+done
+
+# Génération de la base :
+echo "Génération de(s) base(s), patientez svp..."
+/usr/bin/squidGuard -P -C all
+
+# Attribution des droits sur les bases :
+echo "Attribution des droits..."
+chown squid:squid $DATABASE/*
+
+# Reloading Squid Conf
+echo "Rechargement de Squid..."
+/etc/init.d/squid reload
+
+exit 0
