@@ -12,7 +12,7 @@ DATABASE="/etc/squidGuard/db/blacklists"
 
 for base in "${BASES[@]}"
 do
-   echo "Récupération de la base ${base}..."
+   echo "Récupération de(s) base(s) ${base}..."
    # Récupération de l'archive :
    cd /tmp
    wget --continue --quiet --timeout=30 ${URL}/${base}.tar.gz
