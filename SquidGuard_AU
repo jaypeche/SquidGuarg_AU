@@ -6,10 +6,11 @@
 
 # Variables :
 URL="ftp://ftp.univ-tlse1.fr/blacklist"
-BASES=(adult publicite malware phishing warez)
 DATABASE="/etc/squidGuard/db/blacklists"
+BASES_tmp=`cat /etc/squidGuard/squidGuard.conf | grep dest | awk '{print $2}' | sort -d`
+BASES=( $BASES_tmp )
 
-
+# Core
 for base in "${BASES[@]}"
 do
    echo "Récupération de(s) base(s) ${base}..."
