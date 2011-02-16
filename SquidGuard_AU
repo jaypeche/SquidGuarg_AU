@@ -32,7 +32,7 @@ echo "Génération de(s) base(s), patientez svp..."
 
 # Attribution des droits sur les bases :
 echo "Attribution des droits..."
-chown squid:squid $DATABASE/*
+chown squid:squid ${DATABASE}/*
 
 # Reloading Squid Conf
 echo "Rechargement de Squid..."
