@@ -32,10 +32,10 @@ echo "Génération de(s) base(s), patientez svp..."
 
 # Attribution des droits sur les bases :
 echo "Attribution des droits..."
-chown squid:squid ${DATABASE}/*
+chown -R squid:squid ${DATABASE}/*
 
 # Reloading Squid Conf
-echo "Rechargement de Squid..."
-/etc/init.d/squid reload
+echo "Rechargement de Squid, patientez svp..."
+/etc/init.d/squid reload && sleep 3
 
 exit 0
