@@ -1,41 +1,31 @@
 #!/bin/bash
+# Copyright 1999-2011 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
-##############################
-#  SquidGuard Update Script  #
-##############################
-
-# Variables :
 URL="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
-BASES_tmp=`cat /etc/squidGuard/squidGuard.conf | grep dest | awk '{print $2}' | sort -d`
+BASES_tmp=`cat /etc/squidGuard/squidGuard.conf | grep ^dest | awk '{print $2}' | sort -d`
 BASES=( $BASES_tmp )
 
-# Core
+if [ "$(id -u)" != "0" ]; then
+        echo "Root permission needed"
+        exit 0
+fi
+
 for base in "${BASES[@]}"
 do
-   echo "Récupération de(s) base(s) ${base}..."
-   # Récupération de l'archive :
+   echo "Downloading base ${base}..."
    cd /tmp
    wget --continue --quiet --timeout=30 ${URL}/${base}.tar.gz
-
-   # Décompression de l'archive :
    tar -xvzf ${base}.tar.gz -C ${DATABASE}
-
-   # Suppression de l'archive temporaire :
    rm /tmp/${base}.tar.gz
-
 done
 
-# Génération de la base :
-echo "Génération de(s) base(s), patientez svp..."
+echo "Generating database.. This could take a while, please wait..."
 /usr/bin/squidGuard -P -C all
-
-# Attribution des droits sur les bases :
-echo "Attribution des droits..."
+echo "Checking permissions..."
 chown -R squid:squid ${DATABASE}/*
 
-# Reloading Squid Conf
-echo "Rechargement de Squid, patientez svp..."
-/etc/init.d/squid reload && sleep 3
+/etc/init.d/squid reload
 
 exit 0
