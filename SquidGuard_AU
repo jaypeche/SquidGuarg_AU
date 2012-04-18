@@ -1,15 +1,19 @@
 #!/bin/bash
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+DESCRIPTION="This script is used to update your SquidGuard database"
+HOMEPAGE="http://www.squidguard.org"
 
 URL="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
-BASES_tmp=`cat /etc/squidGuard/squidGuard.conf | grep ^dest | awk '{print $2}' | sort -d`
-BASES=( $BASES_tmp )
+BASES_TMP=`cat /etc/squidGuard/squidGuard.conf | grep ^dest | awk '{print $2}' | sort -d`
+BASES=( $BASES_TMP )
 
-if [ "$(id -u)" != "0" ]; then
-        echo "Root permission needed"
-        exit 0
+if [ "$EUID" != 0 ]; then
+        echo "This script must be run as root..."
+        exit 1
 fi
 
 for base in "${BASES[@]}"
@@ -23,9 +27,11 @@ done
 
 echo "Generating database.. This could take a while, please wait..."
 /usr/bin/squidGuard -P -C all
+
 echo "Checking permissions..."
-chown -R squid:squid ${DATABASE}/*
+chown -R squid:squid ${DATABASE}
 
 /etc/init.d/squid reload
 
 exit 0
+
