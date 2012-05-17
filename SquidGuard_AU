@@ -1,15 +1,18 @@
 #!/bin/bash
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
 DESCRIPTION="This script is used to update your SquidGuard database"
 HOMEPAGE="http://www.squidguard.org"
 
-URL="ftp://ftp.univ-tlse1.fr/blacklist"
+SRC_URL="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
-BASES_TMP=`cat /etc/squidGuard/squidGuard.conf | grep ^dest | awk '{print $2}' | sort -d`
-BASES=( $BASES_TMP )
+CONFIGFILE="/etc/squidGuard/squidGuard.conf"
+LOGFILE="/var/log/squidGuard"
+
+BASES_TMP=`cat ${CONFIGFILE} | grep ^dest | awk '{print $2}' | sort -d`
+BASES=( ${BASES_TMP} )
 
 if [ "$EUID" != 0 ]; then
         echo "This script must be run as root..."
@@ -20,7 +23,7 @@ for base in "${BASES[@]}"
 do
    echo "Downloading base ${base}..."
    cd /tmp
-   wget --continue --quiet --timeout=30 ${URL}/${base}.tar.gz
+   wget --continue --quiet --timeout=30 ${SRC_URL}/${base}.tar.gz
    tar -xvzf ${base}.tar.gz -C ${DATABASE}
    rm /tmp/${base}.tar.gz
 done
@@ -30,8 +33,8 @@ echo "Generating database.. This could take a while, please wait..."
 
 echo "Checking permissions..."
 chown -R squid:squid ${DATABASE}
+chown -R squid:squid ${LOGFILE}
 
 /etc/init.d/squid reload
 
 exit 0
-
