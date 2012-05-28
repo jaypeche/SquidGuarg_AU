@@ -29,7 +29,7 @@ do
 done
 
 echo "Generating database.. This could take a while, please wait..."
-/usr/bin/squidGuard -P -C all
+/usr/bin/squidGuard -P -C all || exit 1
 
 echo "Checking permissions..."
 chown -R squid:squid ${DATABASE} ${LOGFILE}
