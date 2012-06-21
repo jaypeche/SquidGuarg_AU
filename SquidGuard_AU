@@ -1,31 +1,34 @@
 #!/bin/bash
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
 DESCRIPTION="This script is used to update your SquidGuard database"
 HOMEPAGE="http://www.squidguard.org"
 
-SRC_URL="ftp://ftp.univ-tlse1.fr/blacklist"
+SRC_URI="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
 CONFIGFILE="/etc/squidGuard/squidGuard.conf"
 LOGFILE="/var/log/squidGuard"
 
-BASES_TMP=`cat ${CONFIGFILE} | grep ^dest | awk '{print $2}' | sort -d`
-BASES=( ${BASES_TMP} )
+echo
+echo -e "\\033[1;32m* \\033[1;39m${DESCRIPTION}"
+echo -e "\\033[1;32m* \\033[1;39mLook at ${HOMEPAGE} for more information"
+echo -e "\\033[0;39m"
 
-if [ "$EUID" != 0 ]; then
-        echo "This script must be run as root..."
-        exit 1
-fi
+[[ "$EUID" != 0 ]] && echo -e "\\033[1;31m* \\033[1;39mThis script must be run as root, exiting !" && exit 1
+[[ ! -f ${CONFIGFILE} ]] && echo -e "\\033[1;31m* \\033[1;39mThe configuration file ${CONFIGFILE} does not exist !" && exit 1
 
-for base in "${BASES[@]}"
+for base in $(cat ${CONFIGFILE} | grep ^dest | awk '{print $2}' | sort -d)
 do
    echo "Downloading base ${base}..."
    cd /tmp
-   wget --continue --quiet --timeout=30 ${SRC_URL}/${base}.tar.gz
+   wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
+   if [ ! -e ${base}.tar.gz ]; then
+        echo -e "\\033[1;31m* \\033[1;39mBase ${base} not found, please make your checks !" && exit 1
+   fi
    tar -xvzf ${base}.tar.gz -C ${DATABASE}
    rm /tmp/${base}.tar.gz
+   echo
 done
 
 echo "Generating database.. This could take a while, please wait..."
