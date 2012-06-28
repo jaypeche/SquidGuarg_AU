@@ -42,7 +42,8 @@ echo "Generating database ... This could take a while, please wait ..."
 /usr/bin/squidGuard -C all || exit 1
 
 echo "Checking permissions ..."
-chown -R squid:squid ${DATABASE} ${LOGFILE}
+chown -R squid:squid ${DATABASE}
+chown -R squid:squid ${LOGFILE}
 
 /etc/init.d/squid reload
 
