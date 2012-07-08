@@ -21,7 +21,7 @@ echo -e "$MESG Look at \\033[1;34m${HOMEPAGE} \\033[0;39mfor more information"
 echo
 
 # Pre-processing tests
-[[ $EUID != 0 ]] && echo -e "$WARN WARNING: \\033[0;39mThis script must be run as root, exiting !" && exit 1
+[[ $EUID != 0 ]] && echo -e "$WARN WARNING: This script must be run as root, exiting !" && exit 1
 [[ ! -f ${CONFIGFILE} ]] && echo -e "$WARN WARNING: The configuration file ${CONFIGFILE} does not exist !" && exit 1
 [[ ! -e ${SQUIDPID} ]] && echo -e "$WARN WARNING: Squid is not running !" && exit 1
 
