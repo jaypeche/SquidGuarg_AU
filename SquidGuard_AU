@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: https://raw.github.com/jaypeche/SquidGuarg_AU/master/SquidGuard_AU, v0.0.2 2012/06/24 16:53.23 jaypeche Exp $
+# $Header: https://raw.github.com/jaypeche/SquidGuarg_AU/master/SquidGuard_AU, v0.0.2 2012/07/08 18:43:47 jaypeche Exp $
 
 DESCRIPTION="This script is used to update your SquidGuard database"
 HOMEPAGE="http://www.squidguard.org"
@@ -12,38 +12,40 @@ CONFIGFILE="/etc/squidGuard/squidGuard.conf"
 SQUIDPID="/var/run/squid.pid"
 LOGFILE="/var/log/squidGuard"
 
+MESG="\e[1;32m *\e[0;39m"
+WARN="\a\e[1;31m *\e[0;39m"
+
 echo
-echo -e "\\033[1;32m * \\033[0;39m${DESCRIPTION}"
-echo -e "\\033[1;32m * \\033[0;39mLook at \\033[1;34m${HOMEPAGE} \\033[0;39mfor more information"
-echo -e "\\033[0;39m"
+echo -e "$MESG ${DESCRIPTION}"
+echo -e "$MESG Look at \\033[1;34m${HOMEPAGE} \\033[0;39mfor more information"
+echo
 
 # Pre-processing tests
-[[ $EUID != 0 ]] && echo -e "\a\\033[1;31m * \\033[1;39mWARNING: \\033[0;39mThis script must be run as root, exiting !" && exit 1
-[[ ! -f ${CONFIGFILE} ]] && echo -e "\a\\033[1;31m * \\033[1;39mWARNING: \\033[0;39mThe configuration file ${CONFIGFILE} does not exist !" && exit 1
-[[ ! -e ${SQUIDPID} ]] && echo -e "\a\\033[1;31m * \\033[1;39mWARNING: \\033[0;39mSquid is not running !" && exit 1
+[[ $EUID != 0 ]] && echo -e "$WARN WARNING: \\033[0;39mThis script must be run as root, exiting !" && exit 1
+[[ ! -f ${CONFIGFILE} ]] && echo -e "$WARN WARNING: The configuration file ${CONFIGFILE} does not exist !" && exit 1
+[[ ! -e ${SQUIDPID} ]] && echo -e "$WARN WARNING: Squid is not running !" && exit 1
 
-for base in $(cat ${CONFIGFILE} | grep ^dest | awk '{print $2}' | sort -d) # Parse squidGuard config file
+for base in $(awk '$1 == "dest" { print $2 }' ${CONFIGFILE} | sort) # Parse squidGuard config file
 do
-   echo "Downloading base ${base} ..."
+   echo -e "$MESG Downloading base ${base} ..."
    cd /tmp
    wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
    if [ ! -e ${base}.tar.gz ]; then
-	echo
-   	echo -e "\a\\033[1;31m * \\033[1;39mWARNING: \\033[0;39mThe base \"${base}\" was not found on this server ..."
-	echo "            Please make your checks !"
-	exit 1
+   echo
+      echo -e "$WARN WARNING: The base \"${base}\" was not found on this server ..."
+   echo "            Please make your checks !"
+   exit 1
    fi
    tar -xvzf ${base}.tar.gz -C ${DATABASE}
    rm /tmp/${base}.tar.gz
    echo
 done
 
-echo "Generating database ... This could take a while, please wait ..."
+echo -e "$MESG Generating database ... This could take a while, please wait ..."
 /usr/bin/squidGuard -C all || exit 1
 
-echo "Checking permissions ..."
-chown -R squid:squid ${DATABASE}
-chown -R squid:squid ${LOGFILE}
+echo -e "$MESG Checking permissions ..."
+chown -R squid:squid ${DATABASE} ${LOGFILE}
 
 /etc/init.d/squid reload
 
