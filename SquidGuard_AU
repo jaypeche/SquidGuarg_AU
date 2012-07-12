@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: https://raw.github.com/jaypeche/SquidGuarg_AU/master/SquidGuard_AU, v0.0.2 2012/07/08 18:43:47 jaypeche Exp $
+# $Header: https://raw.github.com/jaypeche/SquidGuarg_AU/master/SquidGuard_AU, v0.0.2 2012/07/12 14:02:38 jaypeche Exp $
 
 DESCRIPTION="This script is used to update your SquidGuard database"
 HOMEPAGE="http://www.squidguard.org"
@@ -12,12 +12,13 @@ CONFIGFILE="/etc/squidGuard/squidGuard.conf"
 SQUIDPID="/var/run/squid.pid"
 LOGFILE="/var/log/squidGuard"
 
+# Highlight colors
 MESG="\e[1;32m *\e[0;39m"
 WARN="\a\e[1;31m *\e[0;39m"
 
 echo
 echo -e "$MESG ${DESCRIPTION}"
-echo -e "$MESG Look at \\033[1;34m${HOMEPAGE} \\033[0;39mfor more information"
+echo -e "$MESG Look at \e[1;34m${HOMEPAGE} \e[0;39mfor more information"
 echo
 
 # Pre-processing tests
