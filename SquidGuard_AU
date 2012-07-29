@@ -10,11 +10,12 @@ SRC_URI="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
 CONFIGFILE="/etc/squidGuard/squidGuard.conf"
 SQUIDPID="/var/run/squid.pid"
+SQUIDUSER="squid"
 LOGFILE="/var/log/squidGuard"
 
 # Highlight colors
 MESG="\e[1;32m *\e[0;39m"
-WARN="\a\e[1;31m *\e[0;39m"
+WARN="\a\e[1;33m * WARNING:\e[0;39m"
 
 echo
 echo -e "$MESG ${DESCRIPTION}"
@@ -22,9 +23,9 @@ echo -e "$MESG Look at \e[1;34m${HOMEPAGE} \e[0;39mfor more information"
 echo
 
 # Pre-processing tests
-[[ $EUID != 0 ]] && echo -e "$WARN WARNING: This script must be run as root, exiting !" && exit 1
-[[ ! -f ${CONFIGFILE} ]] && echo -e "$WARN WARNING: The configuration file ${CONFIGFILE} does not exist !" && exit 1
-[[ ! -e ${SQUIDPID} ]] && echo -e "$WARN WARNING: Squid is not running !" && exit 1
+[ $EUID != 0 ] && echo -e "$WARN This script must be run as root, exiting !" && exit 1
+[ ! -f ${CONFIGFILE} ] && echo -e "$WARN The configuration file ${CONFIGFILE} does not exist !" && exit 1
+[ ! -e ${SQUIDPID} ] && echo -e "$WARN Squid is not running !" && exit 1
 
 for base in $(awk '$1 == "dest" { print $2 }' ${CONFIGFILE} | sort) # Parse squidGuard config file
 do
@@ -33,7 +34,7 @@ do
    wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
    if [ ! -e ${base}.tar.gz ]; then
    echo
-      echo -e "$WARN WARNING: The base \"${base}\" was not found on this server ..."
+      echo -e "$WARN The base \"${base}\" was not found on this server ..."
    echo "            Please make your checks !"
    exit 1
    fi
@@ -46,7 +47,7 @@ echo -e "$MESG Generating database ... This could take a while, please wait ..."
 /usr/bin/squidGuard -C all || exit 1
 
 echo -e "$MESG Checking permissions ..."
-chown -R squid:squid ${DATABASE} ${LOGFILE}
+chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE} ${LOGFILE}
 
 /etc/init.d/squid reload
 
