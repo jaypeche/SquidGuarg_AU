@@ -47,7 +47,8 @@ echo -e "$MESG Generating database ... This could take a while, please wait ..."
 /usr/bin/squidGuard -C all || exit 1
 
 echo -e "$MESG Checking permissions ..."
-chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE} ${LOGFILE}
+chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE}
+chown -R ${SQUIDUSER}:${SQUIDUSER} ${LOGFILE}
 
 /etc/init.d/squid reload
 
