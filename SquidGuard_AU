@@ -1,7 +1,7 @@
 #!/bin/bash
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: https://raw.github.com/jaypeche/SquidGuarg_AU/master/SquidGuard_AU, v0.0.2 2012/07/12 14:02:38 jaypeche Exp $
+# $Header: $
 
 DESCRIPTION="This script is used to update your SquidGuard database"
 HOMEPAGE="http://www.squidguard.org"
@@ -9,8 +9,8 @@ HOMEPAGE="http://www.squidguard.org"
 SRC_URI="ftp://ftp.univ-tlse1.fr/blacklist"
 DATABASE="/etc/squidGuard/db/blacklists"
 CONFIGFILE="/etc/squidGuard/squidGuard.conf"
-SQUIDPID="/var/run/squid.pid"
 SQUIDUSER="squid"
+SQUIDPID="/var/run/squid.pid"
 LOGFILE="/var/log/squidGuard"
 
 # Highlight colors
@@ -27,29 +27,30 @@ echo
 [ ! -f ${CONFIGFILE} ] && echo -e "$WARN The configuration file ${CONFIGFILE} does not exist !" && exit 1
 [ ! -e ${SQUIDPID} ] && echo -e "$WARN Squid is not running !" && exit 1
 
-for base in $(awk '$1 == "dest" { print $2 }' ${CONFIGFILE} | sort) # Parse squidGuard config file
+for base in `awk '$1 == "dest" { print $2 }' ${CONFIGFILE} | sort` # Parse squidGuard config file
 do
-   echo -e "$MESG Downloading base ${base} ..."
-   cd /tmp
-   wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
-   if [ ! -e ${base}.tar.gz ]; then
-   echo
-      echo -e "$WARN The base \"${base}\" was not found on this server ..."
-   echo "            Please make your checks !"
-   exit 1
-   fi
-   tar -xvzf ${base}.tar.gz -C ${DATABASE}
-   rm /tmp/${base}.tar.gz
-   echo
-done
+   echo -e "$MESG Downloading the database ${base} ..."
+      cd /tmp
+       wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
+        if [ ! -e ${base}.tar.gz ]; then
+                echo
+                echo -e "$WARN The base \"${base}\" was not found on this server ..."
+                echo "            Please make your checks !"
+                exit 1
+        fi
+       tar -xvzf ${base}.tar.gz -C ${DATABASE}
+       rm /tmp/${base}.tar.gz
 
-echo -e "$MESG Generating database ... This could take a while, please wait ..."
-/usr/bin/squidGuard -C all || exit 1
+       echo -e "$MESG Generating the database ${base} ... This could take a while, please wait ..."
+       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/urls
+       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/domains
+       echo
+done
 
 echo -e "$MESG Checking permissions ..."
 chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE}
 chown -R ${SQUIDUSER}:${SQUIDUSER} ${LOGFILE}
 
 /etc/init.d/squid reload
-
 exit 0
+
