@@ -1,0 +1,51 @@
+#!/bin/bash
+
+DESCRIPTION="This script is used to update your SquidGuard database"
+HOMEPAGE="http://www.squidguard.org"
+
+SRC_URI="ftp://ftp.univ-tlse1.fr/blacklist"
+DATABASE="/var/lib/squidguard/db/blacklists"
+CONFIGFILE="/etc/squid/squidGuard.conf"
+SQUIDUSER="proxy"
+SQUIDPID="/var/run/squid3.pid"
+LOGFILE="/var/log/squidGuard"
+
+# Highlight colors
+MESG="\e[1;32m *\e[0;39m"
+WARN="\a\e[1;33m * WARNING:\e[0;39m"
+
+echo
+echo -e "$MESG ${DESCRIPTION}"
+echo -e "$MESG Look at \e[1;34m${HOMEPAGE} \e[0;39mfor more information"
+echo
+
+# Pre-processing tests
+[ $EUID != 0 ] && echo -e "$WARN This script must be run as root, exiting !" && exit 1
+[ ! -f ${CONFIGFILE} ] && echo -e "$WARN The configuration file ${CONFIGFILE} does not exist !" && exit 1
+[ ! -e ${SQUIDPID} ] && echo -e "$WARN Squid is not running !" && exit 1
+
+for base in `awk '$1 == "dest" { print $2 }' ${CONFIGFILE} | sort` # Parse squidGuard config file
+do
+   echo -e "$MESG Downloading the database ${base} ..."
+      cd /tmp
+       wget --continue --quiet --timeout=30 ${SRC_URI}/${base}.tar.gz
+        if [ ! -e ${base}.tar.gz ]; then
+                echo
+                echo -e "$WARN The base \"${base}\" was not found on this server ..."
+                echo "            Please make your checks !"
+                exit 1
+        fi
+	tar -xvzf ${base}.tar.gz -C ${DATABASE}
+	rm /tmp/${base}.tar.gz
+	echo
+	echo -e "$MESG Generating database ${base}... This could take a while, please wait ..."
+	/usr/bin/squidGuard -b -C ${DATABASE}/${base}/urls || exit 1
+	/usr/bin/squidGuard -b -C ${DATABASE}/${base}/domains || exit 1
+done
+
+echo -e "$MESG Checking permissions ..."
+chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE}
+chown -R ${SQUIDUSER}:${SQUIDUSER} ${LOGFILE}
+
+service squid3 reload
+exit 0
