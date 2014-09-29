@@ -1,0 +1,10 @@
+diff -urN squidguard_AU-0.3.0.orig/squidguard_AU.sh squidguard_AU-0.3.0/squidguard_AU.sh
+--- squidguard_AU-0.3.0.orig/squidguard_AU.sh	2014-09-22 16:04:01.000000000 +0200
++++ squidguard_AU-0.3.0/squidguard_AU.sh	2014-09-23 15:17:37.273028914 +0200
+@@ -51,5 +51,5 @@
+ chown -R ${SQUIDUSER}:${SQUIDUSER} ${DATABASE}
+ chown -R ${SQUIDUSER}:${SQUIDUSER} ${LOGFILE}
+ 
+-/etc/init.d/squid reload
++systemctl reload squid.service
+ exit 0

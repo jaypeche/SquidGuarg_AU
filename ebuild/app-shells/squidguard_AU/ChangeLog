@@ -1,0 +1,10 @@
+# ChangeLog for app-shells/squidguard_AU
+# Copyright 1999-2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header:
+
+* squidguard_AU-0.3.0 revision
+
+        (22 Sep 2014) jay <jaypeche@gmail.com>
+        + New ebuild integration for squidguard_AU revision 3
+	+ Systemd support

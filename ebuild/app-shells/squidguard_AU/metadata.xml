@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pkgmetadata>
+  <herd>squidguard_AU</herd>
+   <use>
+    <flag name="cron">Add cron task for squidguard_AU</flag>
+    <flag name="systemd">Use systemd as system management daemon</flag>
+   </use>
+    <maintainer>
+      <email>jaypeche@gmail.com</email>
+    </maintainer>
+  <longdescription>
+This utility is used to update your SquidGuard database
+  </longdescription>
+</pkgmetadata>
