@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header:
+# $Header: https://github.com/jaypeche/SquidGuarg_AU/tree/master/ebuild/app-shells/squidguard_AU
 
 EAPI=4
 
