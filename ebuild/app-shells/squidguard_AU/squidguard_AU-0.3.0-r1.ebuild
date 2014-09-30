@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: https://github.com/jaypeche/SquidGuarg_AU/tree/master/ebuild/app-shells/squidguard_AU
+# $Header: https://github.com/jaypeche/SquidGuarg_AU/tree/master/ebuild/app-shells/squidguard_AU/squidguard_AU-0.3.0-r1.ebuild jay Ext $
 
 EAPI=4
 
