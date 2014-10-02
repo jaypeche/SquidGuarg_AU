@@ -1,14 +1,15 @@
 [Unit]
 Description=A full-featured web proxy cache
 After=network.target
-
+ 
 [Service]
 Type=forking
 PIDFile=/var/run/squid.pid
-
-ExecStart=/usr/sbin/squid -YC
+EnvironmentFile=/etc/conf.d/squid
+ 
+ExecStart=/usr/sbin/squid $SQUID_OPTS
 ExecReload=/usr/sbin/squid -k reconfigure
 ExecStop=/usr/sbin/squid -k shutdown
-
+ 
 [Install]
 WantedBy=multi-user.target
