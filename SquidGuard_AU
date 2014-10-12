@@ -42,8 +42,8 @@ do
        rm /tmp/${base}.tar.gz
 
        echo -e "$MESG Generating the database ${base} ... This could take a while, please wait ..."
-       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/urls
-       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/domains
+       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/urls || exit 1
+       /usr/bin/squidGuard -b -C ${DATABASE}/${base}/domains || exit 1
        echo
 done
 
