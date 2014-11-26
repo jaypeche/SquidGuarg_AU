@@ -37,7 +37,7 @@ src_unpack() {
 
 src_install() {
 	einfo "Install shell script into sbin path..."
-	dosbin squidguard_AU.sh || die "doins failed !"
+	dosbin ${PREFIX}/squidguard_AU.sh || die "dosbin failed !"
 
 	if use cron; then
 		einfo "Install symlink for cron.weekly task..."
