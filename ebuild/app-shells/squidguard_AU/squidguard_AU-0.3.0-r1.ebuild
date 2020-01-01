@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: https://raw.githubusercontent.com/jaypeche/SquidGuarg_AU/master/ebuild/app-shells/squidguard_AU/squidguard_AU-0.3.0-r1.ebuild jay Ext $
 
@@ -46,7 +46,7 @@ src_install() {
 
 	if use systemd ; then
 		einfo "Install Squid systemd unit..."
- 		systemd_dounit "${FILESDIR}/squid.service" || die "dounit failed !"
+		systemd_dounit "${FILESDIR}/squid.service" || die "dounit failed !"
 	fi
 
 	dodoc ChangeLog Copying README || die "dodoc failed !"
